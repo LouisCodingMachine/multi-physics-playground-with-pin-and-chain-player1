@@ -21,23 +21,23 @@ export const createLevel10: LevelFactory = (world) => {
   });
 
   // 1) 첫 번째 상자
-  const floor1 = Matter.Bodies.rectangle(230, 500, 120, 200, {
+  const floor1 = Matter.Bodies.rectangle(350, 450, 120, 200, {
     isStatic: true,
     label: 'floor1',
-    render: { fillStyle: '#10b981' },
-    collisionFilter: { category: 0x0001, mask: 0xFFFF },
+    render: { fillStyle: 'transparent' },
+    collisionFilter: { category: 0x0001, mask: 0xFFFF, group: -1},
   });
 
   // 2) 두 번째 상자
-  const floor2 = Matter.Bodies.rectangle(550, 550, 120, 200, {
+  const floor2 = Matter.Bodies.rectangle(570, 550, 120, 200, {
     isStatic: true,
     label: 'floor2',
     render: { fillStyle: '#10b981' },
-    collisionFilter: { category: 0x0001, mask: 0xFFFF },
+    collisionFilter: { category: 0x0001, mask: 0xFFFF},
   });
 
   // 3) 세 번째 상자
-  const floor3 = Matter.Bodies.rectangle(690, 550, 160, 300, {
+  const floor3 = Matter.Bodies.rectangle(710, 550, 160, 300, {
     isStatic: true,
     label: 'floor3',
     render: { fillStyle: '#10b981' },
@@ -45,7 +45,7 @@ export const createLevel10: LevelFactory = (world) => {
   });
 
   // 3-2) 공 튀김 방지 상자
-  const safeBox = Matter.Bodies.rectangle(790, 380, 40, 450, {
+  const safeBox = Matter.Bodies.rectangle(810, 380, 40, 450, {
     isStatic: true,
     label: 'safe_box',
     render: { fillStyle: '#10b981' },
@@ -53,12 +53,15 @@ export const createLevel10: LevelFactory = (world) => {
   });
 
   // 4) 힌지 달린 상자
-  const hingeBox = Matter.Bodies.rectangle(230, 100, 150, 100, {
+  const hingeBox = Matter.Bodies.rectangle(350, 60, 150, 100, {
     isStatic: true,
-    label: 'hingeBox',
-    render: { fillStyle: '#10b981' },
-    collisionFilter: { category: 0x0001, mask: 0xFFFF },
-  });
+  label: 'hingeBox',
+  frictionAir:  0,    // 공기 저항 0
+  friction: 0,        // 표면 마찰 0
+  frictionStatic: 0,  // 정지 마찰 0
+  render: { fillStyle: '#10b981' },
+  collisionFilter: { category: 0x0001, mask: 0xFFFF, group: -1 },
+});
 
   // 5) 힌지 축 생성
   const radius = 10;
@@ -86,18 +89,20 @@ export const createLevel10: LevelFactory = (world) => {
     pointB: { x: 0, y: 0 },
     length: 0,
     stiffness: 1,
+    damping: 0,
     render: { visible: false },
   });
 
   // 7) 공 및 별 생성
-  const ball = Matter.Bodies.circle(230, 400, 15, {
+  const ball = Matter.Bodies.circle(350, 400, 15, {
     label: 'ball',
-    frictionAir:  0.001,  
+    frictionAir:  0,
+    friction: 0,  
     render: { fillStyle: '#ef4444' },
     collisionFilter: { category: 0x0001, mask: 0xFFFF },
   });
 
-  const star = Matter.Bodies.trapezoid(700,390, 20, 20, 1, {
+  const star = Matter.Bodies.trapezoid(720,390, 20, 20, 1, {
     isStatic: true,
     label: 'balloon',
     render: { fillStyle: '#fbbf24' },

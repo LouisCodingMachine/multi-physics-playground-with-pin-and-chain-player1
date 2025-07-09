@@ -648,7 +648,7 @@ const PhysicsCanvas: React.FC = () => {
     console.log("Render.create 완료")
     renderRef.current = render;
 
-    engineRef.current.world.gravity.y = 0.1;
+    engineRef.current.world.gravity.y = 0.8;
 
     // 기존 러너가 있으면 중지
     if (runnerRef.current) {
@@ -1019,11 +1019,11 @@ const PhysicsCanvas: React.FC = () => {
           lineWidth: 1,
         },
         isStatic: false, // 사물이 떨어지도록 설정
-        friction: 0.8,
+        friction: 0,
         frictionStatic: 1,
         restitution: 0.2,
         density: 0.005, // 밀도를 낮추어 떨어지는 속도를 줄임
-        frictionAir: 0.02, // 공중 저항을 높임
+        frictionAir: 0, // 공중 저항을 높임
         label: customId || `custom_${Date.now()}`, // Assign customId
         collisionFilter: {
           group: groupNumber,
