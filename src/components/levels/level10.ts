@@ -24,8 +24,8 @@ export const createLevel10: LevelFactory = (world) => {
   const floor1 = Matter.Bodies.rectangle(350, 450, 120, 200, {
     isStatic: true,
     label: 'floor1',
-    render: { fillStyle: 'transparent' },
-    collisionFilter: { category: 0x0001, mask: 0xFFFF, group: -1},
+    render: { fillStyle: '#10b981' },
+    collisionFilter: { category: 0x0001, mask: 0xFFFF, group: -10},
   });
 
   // 2) 두 번째 상자
@@ -51,35 +51,42 @@ export const createLevel10: LevelFactory = (world) => {
     render: { fillStyle: '#10b981' },
     collisionFilter: { category: 0x0001, mask: 0xFFFF },
   });
+const hingeGroup = -10; // 독립된 고유 그룹 번호
 
   // 4) 힌지 달린 상자
   const hingeBox = Matter.Bodies.rectangle(350, 60, 150, 100, {
-    isStatic: true,
+  isStatic: false, // 반드시 false (움직일 수 있게)
   label: 'hingeBox',
-  frictionAir:  0,    // 공기 저항 0
-  friction: 0,        // 표면 마찰 0
-  frictionStatic: 0,  // 정지 마찰 0
+  frictionAir: 0,
+  friction: 0,
+  frictionStatic: 0,
   render: { fillStyle: '#10b981' },
-  collisionFilter: { category: 0x0001, mask: 0xFFFF, group: -1 },
+  collisionFilter: { category: 0x0002, mask: 0x0001, group: hingeGroup },
 });
 
   // 5) 힌지 축 생성
   const radius = 10;
   const nail15_0 = Matter.Bodies.circle(
-    hingeBox.position.x,
-    hingeBox.position.y,
-    radius,
-    {
-      isStatic: true,
-      label: 'nail15_0',
-      collisionFilter: { group: -1, category: 0x0002, mask: 0x0000 },
-      render: {
-        fillStyle: 'rgba(0,0,0,0)',
-        strokeStyle: '#fbbf24',
-        lineWidth: 3,
-      },
-    }
-  );
+  hingeBox.position.x,
+  hingeBox.position.y,
+  radius,
+  {
+    isStatic: true,
+    label: 'nail15_0',
+    collisionFilter: {
+      category: 0x0002, // hingeBox와 같은 힌지 카테고리
+      mask: 0x0001,     // 공하고만 충돌 가능
+      group: hingeGroup, // 같은 그룹 (충돌 없음)
+    },
+    render: {
+      fillStyle: 'rgba(0,0,0,0)',
+      strokeStyle: '#fbbf24',
+      lineWidth: 3,
+    },
+  }
+);
+
+
 
   // 6) 제약 조건 설정
   const pivot15 = Matter.Constraint.create({

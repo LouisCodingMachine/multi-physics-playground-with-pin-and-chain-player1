@@ -5,6 +5,7 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "typeRoots": ["node_modules/@types", "src/types"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -18,7 +19,13 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* WebGazer 타입 선언 추가 */
+    "typeRoots": [
+      "node_modules/@types",
+      "src/types"
+    ]
   },
-  "include": ["src"]
+  "include": ["src", "src/types/**/*.d.ts"]
 }
