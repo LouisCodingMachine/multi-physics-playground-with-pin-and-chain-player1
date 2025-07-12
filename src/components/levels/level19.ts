@@ -1,4 +1,4 @@
-// src/levels/level24.ts
+// src/levels/level8.ts
 import Matter from 'matter-js';
 import type { LevelFactory } from './index';
 
@@ -20,94 +20,91 @@ export const createLevel19: LevelFactory = (world) => {
     wall.render.fillStyle = '#94a3b8';
   });
 
-  // 1) 곡선형 '무지개' 플랫폼 생성
-  const rainbowVertices = Array.from({ length: 21 }, (_, i) => {
-    const theta = Math.PI + (i / 20) * Math.PI; // π ~ 2π
-    return {
-      x: 400 + 150 * Math.cos(theta),
-      y: 400 + 150 * Math.sin(theta),
-    };
+  // 공 생성
+  const ball = Matter.Bodies.circle(100, 490, 15, {
+    render: { fillStyle: '#ef4444' },
+    label: 'ball',
+    frictionAir:  0.001,  
+    collisionFilter: { category: 0x0001, mask: 0xFFFF },
   });
-  const rainbow = Matter.Bodies.fromVertices(
-    300, 150,
-    [rainbowVertices],
-    {
+
+  // 바닥 플랫폼
+  const floor = Matter.Bodies.rectangle(400, 550, 750, 80, {
+    isStatic: true,
+    label: 'floor',
+    render: { fillStyle: '#6b7280' },
+    collisionFilter: { category: 0x0001, mask: 0xFFFF },
+  });
+
+  // T자 구조물 생성
+  const Ishape = Matter.Bodies.rectangle(550, 295, 30, 390, {
+    isStatic: false,
+    label: 'Ishape',
+    render: { fillStyle: '#4B0082' },
+    collisionFilter: { group: -1, category: 0x0002, mask: 0xFFFF & ~0x0002 },
+  });
+  const upperrectangle = Matter.Bodies.rectangle(550, 85, 150, 30, {
+    isStatic: false,
+    label: 'upperrectangle',
+    render: { fillStyle: '#4B0082' },
+    collisionFilter: { group: -1, category: 0x0002, mask: 0xFFFF & ~0x0002 },
+  });
+  const Tshape = Matter.Body.create({
+    parts: [upperrectangle, Ishape],
+    label: 'Tshape',
+    collisionFilter: { group: -1, category: 0x0002, mask: 0xFFFF & ~0x0002 },
+  });
+
+  // 목표(별) 생성
+  const star = Matter.Bodies.trapezoid(700, 495, 20, 20, 1, {
+    render: { fillStyle: '#fbbf24' },
+    label: 'balloon',
+    isStatic: true,
+    collisionFilter: { category: 0x0001, mask: 0x0001 },
+  });
+
+  // 못(Nail) 생성 및 제약
+  const nailData = [
+    { x: 550, y: 120, id: 'nail8_0' },
+  ];
+  const nails = nailData.map(({ x, y, id }) =>
+    Matter.Bodies.circle(x, y, 10, {
       isStatic: true,
-      label: 'rainbow_24',
-      render: {
-        fillStyle: '#fbbf24',
-        strokeStyle: '#f59e0b',
-        lineWidth: 4,
-      },
-      collisionFilter: { category: 0x0001, mask: 0xFFFF },
-    },
-    true
+      label: id,
+      collisionFilter: { group: -1, category: 0x0002, mask: 0x0000 },
+      render: { fillStyle: 'rgba(0,0,0,0)', strokeStyle: '#fbbf24', lineWidth: 3 },
+      mass: 30,
+    })
+  );
+  const constraints = nails.map((nail, i) =>
+    Matter.Constraint.create({
+      bodyA: Tshape,
+      pointA: { x: nailData[i].x - Tshape.position.x, y: nailData[i].y - Tshape.position.y },
+      bodyB: nail,
+      pointB: { x: 0, y: 0 },
+      stiffness: 1,
+      length: 0,
+      render: { visible: false },
+    })
   );
 
-  // 2) 공 생성 및 초기 위치 저장
-  const BallX = 270;
-  const BallY = 200 - 200 - 15 + 4;
-  const ball = Matter.Bodies.circle(
-    BallX,
-    BallY,
-    15,
-    {
-      label: 'ball',
-      frictionAir:  0.001,  
-      render: { fillStyle: '#ef4444' },
-      collisionFilter: { category: 0x0001, mask: 0xFFFF },
-    }
-  );
-  // initialBallPositionRef.current = { x: BallX, y: BallY };
-  // ballRef.current = ball;
-
-  // 3) 아래 왼쪽 박스 생성
-  const leftBox = Matter.Bodies.rectangle(
-    200, 550,
-    150, 200,
-    {
-      isStatic: true,
-      label: 'leftBox_24',
-      render: { fillStyle: '#6b7280' },
-      collisionFilter: { category: 0x0001, mask: 0xFFFF },
-    }
-  );
-
-  // 4) 아래 오른쪽 박스 및 별 생성
-  const rightBox = Matter.Bodies.rectangle(
-    600, 550,
-    150, 300,
-    {
-      isStatic: true,
-      label: 'rightBox_24',
-      render: { fillStyle: '#6b7280' },
-      collisionFilter: { category: 0x0001, mask: 0xFFFF },
-    }
-  );
-  const star = Matter.Bodies.trapezoid(
-    600, 390, 20, 20, 1,
-    {
-      isStatic: true,
-      label: 'balloon',
-      render: { fillStyle: '#fbbf24' },
-      collisionFilter: { category: 0x0001, mask: 0x0001 },
-    }
-  );
-
-  // 5) 월드에 바디 추가
+  // 월드에 바디 추가
   Matter.World.add(world, [...walls,
-    rainbow,
+    ...walls,
     ball,
-    leftBox,
-    rightBox,
     star,
+    floor,
+    Tshape,
+    ...nails,
+    ...constraints,
   ]);
 
   return [...walls,
-    rainbow,
+    ...walls,
     ball,
-    leftBox,
-    rightBox,
     star,
+    floor,
+    Tshape,
+    ...nails,
   ];
 };

@@ -309,8 +309,12 @@ useEffect(() => {
       return;
     }
 
+    if (currentLevelRef.current === 8 && targetBody.label === 'lever') {
+      data.radius = 10;
+    }
+
     // 2) 못 생성 (물리 충돌 모두 끔)
-    const nail = Matter.Bodies.circle(data.centerX, data.centerY, data.radius, {
+    let nail = Matter.Bodies.circle(data.centerX, data.centerY, data.radius, {
       isStatic: targetBody.isStatic,      // 타겟과 동일하게
       collisionFilter: {
         group: data.groupNumber,
@@ -326,7 +330,38 @@ useEffect(() => {
       mass: 30,
     });
     // 월드에 추가 및 상태 업데이트
-    Matter.Composite.add(engineRef.current.world, nail);
+    if(currentLevelRef.current === 8 && targetBody.label === 'lever') {
+      
+      nail.label += '_fulcrum';
+      nail.isStatic = true; // 레버의 축 역할을 하기 때문에 정적이어야 함
+      Matter.Composite.add(engineRef.current.world, nail);
+
+      const lever = bodies.find(body => body.label === 'lever')
+
+      // 8) 힌지 연결
+      if(lever) {
+        const pivot = Matter.Constraint.create({
+          bodyA: lever,
+          pointA: { x: nail.position.x - lever.position.x, y: nail.position.y-lever.position.y },
+          bodyB: nail,
+          pointB: { x: 0, y: 0 },
+          length: 0,
+          stiffness: 1,
+          render: { visible: true },
+        });
+        Matter.Composite.add(engineRef.current.world, pivot);
+      }
+
+      const fulcrum = bodies.find(body => body.label === 'fulcrum' || body.label.includes('fulcrum'));
+      const constraints = Matter.Composite.allConstraints(engineRef.current.world);
+      const leverPivot = constraints.find(ct => ct.label === 'leverPivot');
+      if(fulcrum && leverPivot) {
+        Matter.Composite.remove(engineRef.current.world, fulcrum);
+        Matter.Composite.remove(engineRef.current.world, leverPivot);
+      }
+    } else {
+      Matter.Composite.add(engineRef.current.world, nail);
+    }
     addNail(nail);
 
     // 3) Constraint로 고정
@@ -342,6 +377,7 @@ useEffect(() => {
       stiffness: 1,
       render: { visible: false },
       collideConnected: false,
+      label: currentLevelRef.current === 8 && targetBody.label === 'lever' ? 'leverPivot' : ``,
     });
     Matter.Composite.add(engineRef.current.world, constraint);
   };
@@ -691,8 +727,9 @@ useEffect(() => {
       });
     }
 
-
-
+    // if(ballRef.current) {
+    //   Matter.Body.applyForce(ballRef.current, ballRef.current.position, {x: 100, y: 0});
+    // }
     // 공이 wall_bottom 아래로 떨어졌는지 확인
     const handleCollisionStart = (event: Matter.IEventCollision<Engine>) => {
       console.log('collisionStart event:', event);
@@ -716,7 +753,7 @@ useEffect(() => {
   const threshold = 40;
 
   // ── Stage 6 전용: square_* 만 땅에 닿으면 즉시 제거 ──
-  if (currentLevelRef.current === 6) {
+  if (currentLevelRef.current === 1 || currentLevelRef.current === 6 || currentLevelRef.current === 8) {
     Matter.Composite.allBodies(world).forEach(body => {
       if (
         body.label.startsWith('square_') &&
@@ -852,7 +889,7 @@ const createPhysicsBody = (
   customId?: string
 ) => {
   // ── Stage 6: 무조건 80×80 사각형만 ──
-  if (currentLevelRef.current === 6) {
+  if (currentLevelRef.current === 1 || currentLevelRef.current === 6 || currentLevelRef.current === 8) {
     // drawPoints 가 비어 있으면 캔버스 중앙
     const cx = points.length
       ? points.reduce((sum, p) => sum + p.x, 0) / points.length
@@ -1274,7 +1311,7 @@ const createPhysicsBody = (
   // ── 2) 펜 툴 전용 처리 ──
   if (tool === 'pen' && currentTurn === p1) {
     // Level 6/18 전용: 80×80 사각형만
-    if (currentLevel === 6 || currentLevel === 18) {
+    if (currentLevel === 6 || currentLevel === 18 || currentLevelRef.current === 1 || currentLevelRef.current === 8) {
       const cx = drawPoints.length
         ? drawPoints.reduce((sum, p) => sum + p.x, 0) / drawPoints.length
         : canvasRef.current!.width / 2;
