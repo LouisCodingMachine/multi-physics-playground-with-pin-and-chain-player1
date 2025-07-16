@@ -34,7 +34,9 @@ export const createLevel3: LevelFactory = (world) => {
   const ball = Matter.Bodies.circle(150, 460, 15, {
     label: 'ball',
     render: { fillStyle: '#ef4444' },
-    frictionAir: 0.001,
+    restitution: 1,
+    frictionAir: 0,
+    friction: 0,
     collisionFilter: {
       category: BALL_CATEGORY,
       mask:     PLATFORM_CATEGORY | CLOUD_CATEGORY | DRAWN_CATEGORY,

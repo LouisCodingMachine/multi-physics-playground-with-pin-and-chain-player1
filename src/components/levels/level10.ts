@@ -43,7 +43,7 @@ export const createLevel10: LevelFactory = (world) => {
   });
 
   // 3) 세 번째 상자
-  const floor3 = Matter.Bodies.rectangle(710, 550, 160, 300, {
+  const floor3 = Matter.Bodies.rectangle(710, 550, 160, 250, {
     isStatic: true,
     label: 'floor3',
     render: { fillStyle: '#10b981' },
@@ -107,7 +107,7 @@ export const createLevel10: LevelFactory = (world) => {
     render: { fillStyle: '#ef4444' },
     collisionFilter: { category: 0x0001, mask: 0xFFFF },
   });
-  const star = Matter.Bodies.trapezoid(720, 390, 20, 20, 1, {
+  const star = Matter.Bodies.trapezoid(720, 415, 20, 20, 1, {
     isStatic: true,
     label: 'balloon',
     render: { fillStyle: '#fbbf24' },

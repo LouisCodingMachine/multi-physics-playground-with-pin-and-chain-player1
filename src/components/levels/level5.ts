@@ -70,7 +70,7 @@ export const createLevel5: LevelFactory = (world) => {
   const hingeBox = Matter.Bodies.rectangle(400, 155, 300, 35, {
     label: 'lever',
     render: { fillStyle: '#6b7280' },
-    collisionFilter: { category: 0x0002, mask: 0xFFFF }
+    collisionFilter: { category: 0x0002, mask: 0xFFFD }
   });
   const fulcrum = Matter.Bodies.circle(370, 400, 5, {
     isStatic: true,
