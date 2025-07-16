@@ -36,18 +36,20 @@ export const createLevel19: LevelFactory = (world) => {
     collisionFilter: { category: 0x0001, mask: 0xFFFF },
   });
 
-  // T자 구조물 생성
-  const Ishape = Matter.Bodies.rectangle(550, 295, 30, 390, {
+  // T자 구조물 생성)
+  const Ishape = Matter.Bodies.rectangle(500, 295, 30, 430, {
     isStatic: false,
     label: 'Ishape',
     render: { fillStyle: '#4B0082' },
     collisionFilter: { group: -1, category: 0x0002, mask: 0xFFFF & ~0x0002 },
+    density: 0.00026
   });
-  const upperrectangle = Matter.Bodies.rectangle(550, 85, 150, 30, {
+  const upperrectangle = Matter.Bodies.rectangle(500, 85, 150, 30, {
     isStatic: false,
     label: 'upperrectangle',
     render: { fillStyle: '#4B0082' },
     collisionFilter: { group: -1, category: 0x0002, mask: 0xFFFF & ~0x0002 },
+    density: 0.00026
   });
   const Tshape = Matter.Body.create({
     parts: [upperrectangle, Ishape],
@@ -65,7 +67,7 @@ export const createLevel19: LevelFactory = (world) => {
 
   // 못(Nail) 생성 및 제약
   const nailData = [
-    { x: 550, y: 120, id: 'nail8_0' },
+    { x: 500, y: 150, id: 'nail_Tshape' },
   ];
   const nails = nailData.map(({ x, y, id }) =>
     Matter.Bodies.circle(x, y, 10, {
@@ -85,6 +87,7 @@ export const createLevel19: LevelFactory = (world) => {
       stiffness: 1,
       length: 0,
       render: { visible: false },
+      label: 'constraint_Tshape'
     })
   );
 
