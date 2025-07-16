@@ -295,12 +295,12 @@ useEffect(() => {
   }) => {
     if (data.playerId === p1) return
     // ─── Level 6 전용: centerX/Y 로 사각형 그리기 ───
-    if ((data.currentLevel === 6 || data.currentLevel === 18) && data.centerX != null && data.centerY != null) {
+    if ((data.currentlevel === 46 || data.currentlevel === 418) && data.centerX != null && data.centerY != null) {
       const square = Matter.Bodies.rectangle(
         data.centerX, data.centerY,
         80, 80,
         {
-          density: data.currentLevel === 18 ? 1 : 0.001,
+          density: data.currentlevel === 418 ? 1 : 0.001,
           render: {
             fillStyle: 'rgba(0,0,0,0)',
             strokeStyle: '#1d4ed8',
@@ -598,7 +598,7 @@ useEffect(() => {
       console.log("렌더링 객체 초기화 완료")
     }
     
-    const bgColor = (currentLevel === 7 || currentLevel === 14)
+    const bgColor = (currentlevel === 47 || currentlevel === 414)
     ? '#1e293b'   // 어두운 그레이–블루 계열
     : '#f8f4e3';  // 기존 밝은 배경
 
@@ -617,7 +617,7 @@ useEffect(() => {
     console.log("Render.create 완료")
     renderRef.current = render;
 
-    engineRef.current.world.gravity.y = (currentLevel === 10) ? 0.7 : 0.3;
+    engineRef.current.world.gravity.y = (currentlevel === 410) ? 0.7 : 0.3;
 
     // 기존 러너가 있으면 중지
     if (runnerRef.current) {
@@ -659,7 +659,7 @@ useEffect(() => {
         }
       });
     }
-if (currentLevel === 10) {
+if (currentlevel === 410) {
     const hinge = Matter.Composite.allBodies(world).find(b => b.label === 'hingeBox');
     const nail  = Matter.Composite.allBodies(world).find(b => b.label === 'nail');
     if (hinge && nail) {
@@ -693,7 +693,7 @@ if (currentLevel === 10) {
   const canvasHeight = canvasRef.current!.height;
   const threshold = 40;
 
-  if ((currentLevelRef.current === 10 || currentLevelRef.current === 3) && ballRef.current) {
+  if ((currentLevelRef.current === 410 || currentLevelRef.current === 43) && ballRef.current) {
       const wallBottom = Matter.Composite
         .allBodies(world)
         .find(b => b.label === 'wall_bottom');
@@ -704,7 +704,7 @@ if (currentLevel === 10) {
     }
     
   // ── Stage 6 전용: square_* 만 땅에 닿으면 즉시 제거 ──
-  if (currentLevelRef.current === 6) {
+  if (currentLevelRef.current === 46) {
     Matter.Composite.allBodies(world).forEach(body => {
       if (
         body.label.startsWith('square_') &&
@@ -765,7 +765,7 @@ if (currentLevel === 10) {
       if (runnerRef.current) Matter.Runner.stop(runnerRef.current);
       Matter.World.clear(world, false);
       Matter.Engine.clear(engineRef.current);
-      if (currentLevel === 10) {
+      if (currentlevel === 410) {
      const hinge = Matter.Composite.allBodies(world).find(b => b.label === 'hingeBox');
      const nail  = Matter.Composite.allBodies(world).find(b => b.label === 'nail');
      if (hinge && nail) {
@@ -853,7 +853,7 @@ const createPhysicsBody = (
   customId?: string
 ) => {
   // ── Stage 6: 무조건 80×80 사각형만 ──
-  if (currentLevelRef.current === 6) {
+  if (currentLevelRef.current === 46) {
     // drawPoints 가 비어 있으면 캔버스 중앙
     const cx = points.length
       ? points.reduce((sum, p) => sum + p.x, 0) / points.length
@@ -962,7 +962,7 @@ const createPhysicsBody = (
   );
   
 
-    if (currentLevelRef.current === 10 && nailsInShape.length > 0) {
+    if (currentLevelRef.current === 410 && nailsInShape.length > 0) {
     const nail = nailsInShape[0];
 
     body.collisionFilter = {
@@ -990,7 +990,7 @@ const createPhysicsBody = (
 
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (tool === 'pin' && currentLevel === 10) {
+    if (tool === 'pin' && currentlevel === 410) {
     // 핀 툴 모드인데 스테이지10이면 그냥 무시
     return;
   }
@@ -1280,7 +1280,7 @@ const createPhysicsBody = (
   // ── 2) 펜 툴 전용 처리 ──
   if (tool === 'pen' && currentTurn === p1) {
     // Level 6/18 전용: 80×80 사각형만
-    if (currentLevel === 6 || currentLevel === 18) {
+    if (currentlevel === 46 || currentlevel === 418) {
       const cx = drawPoints.length
         ? drawPoints.reduce((sum, p) => sum + p.x, 0) / drawPoints.length
         : canvasRef.current!.width / 2;
@@ -1290,7 +1290,7 @@ const createPhysicsBody = (
       const customId = `square_${Date.now()}`;
 
       const square = Matter.Bodies.rectangle(cx, cy, 80, 80, {
-        density: currentLevel === 18 ? 1 : 0.001,
+        density: currentlevel === 418 ? 1 : 0.001,
         render: {
           fillStyle: 'rgba(0,0,0,0)',
           strokeStyle: '#1d4ed8',
@@ -1369,7 +1369,7 @@ const createPhysicsBody = (
 
 
   const handleToolChange = (newTool: 'pen' | 'eraser' | 'pin' | 'chain' | 'push') => {
-    if (currentLevel === 10 && newTool === 'pin') {
+    if (currentlevel === 410 && newTool === 'pin') {
     return; // 스테이지 10에선 pin 선택 불가
   }
     if (currentTurn === p2) return;
@@ -1590,11 +1590,11 @@ const createPhysicsBody = (
           </button>
           <button
             onClick={() => handleToolChange('pin')}
-            disabled={currentLevel === 10}
+            disabled={currentlevel === 410}
             className={`
               p-2 rounded
               ${tool === 'pin' ? 'bg-blue-500 text-white' : 'bg-gray-200'}
-              ${currentLevel === 10 ? 'opacity-50 cursor-not-allowed' : ''}
+              ${currentlevel === 410 ? 'opacity-50 cursor-not-allowed' : ''}
             `}
           >
             <Pin size={24} />
@@ -1637,7 +1637,7 @@ const createPhysicsBody = (
         </div>
         
         <div className="relative">
-          {currentLevel === 10 && (
+          {currentlevel === 410 && (
   <div className="absolute top-2 right-2 flex gap-2 z-20">
     {/* 이전 힌지 위치 */}
     <button
@@ -1754,7 +1754,7 @@ const createPhysicsBody = (
         <div className="flex gap-4">
           <button
             onClick={() => handleLevelChange('prev')}
-            disabled={currentLevel === 1}
+            disabled={currentLevel === 41}
             className="p-2 rounded bg-gray-200 disabled:opacity-50"
           >
             <ChevronLeft size={24} />
