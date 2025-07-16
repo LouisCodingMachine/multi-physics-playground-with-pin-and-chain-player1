@@ -23,15 +23,9 @@ export const createLevel8: LevelFactory = (world) => {
   // 1) 바닥 생성
   const floor = Matter.Bodies.rectangle(400, 610, 810, 20, {
     isStatic: true,
-<<<<<<< HEAD
-    label: 'left_box',
-    render: { fillStyle: '#10b981' },
-    collisionFilter: { category: 0x0002, mask: 0xFFFD },
-=======
     label: 'wall_bottom',
     render: { fillStyle: '#94a3b8' },
     collisionFilter: { category: 0x0001, mask: 0xFFFF },
->>>>>>> bfae893967ec6d766f8a04315feff3e7921ef072
   });
 
   // 2) 왼쪽 받침용 박스
@@ -39,7 +33,7 @@ export const createLevel8: LevelFactory = (world) => {
     isStatic: true,
     label: 'support1',
     render: { fillStyle: '#10b981' },
-    collisionFilter: { category: 0x0002, mask: 0xFFFD },
+    collisionFilter: { category: 0x0001, mask: 0xFFFF },
   });
 
   const support2 = Matter.Bodies.rectangle(260, 250, 40, 20, {
