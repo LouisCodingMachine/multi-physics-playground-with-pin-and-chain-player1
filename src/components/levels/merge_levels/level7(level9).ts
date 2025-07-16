@@ -2,7 +2,7 @@
 import Matter from 'matter-js';
 import type { LevelFactory } from './index';
 
-export const createLevel10: LevelFactory = (world) => {
+export const createLevel9: LevelFactory = (world) => {
   // 기본 벽 옵션
   const wallOptions = {
     isStatic: true,
@@ -50,7 +50,7 @@ export const createLevel10: LevelFactory = (world) => {
     friction: 0,
     frictionStatic: 0,
     restitution: 1,
-    render: { fillStyle: '#964b00' },
+    render: { fillStyle: '#6b7280' },
     collisionFilter: { category: 0x0001, mask: 0xFFFF },
   });
 
@@ -60,9 +60,9 @@ export const createLevel10: LevelFactory = (world) => {
   const leftWallB = Matter.Bodies.rectangle(240, 325,  10, 40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
 
   // 5) 오른쪽 스쿱
-  const rightBase  = Matter.Bodies.rectangle(580, 340, 100, 10, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
+  const rightBase  = Matter.Bodies.rectangle(600, 340, 140, 10, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
   const rightWallA = Matter.Bodies.rectangle(530, 325, 10,  40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
-  const rightWallB = Matter.Bodies.rectangle(630, 325, 10,  40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
+  const rightWallB = Matter.Bodies.rectangle(670, 325, 10,  40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
 
   // 6) 레버 복합체 생성
   const lever = Matter.Body.create({
@@ -73,7 +73,7 @@ export const createLevel10: LevelFactory = (world) => {
   });
 
   // 7) 지렛대 축
-  const fulcrum = Matter.Bodies.circle(250, 370, 10, {
+  const fulcrum = Matter.Bodies.circle(300, 370, 10, {
     isStatic: true,
     label: 'fulcrum',
     render: { fillStyle: 'rgba(0,0,0,0)', strokeStyle: '#fbbf24', lineWidth: 1 },
@@ -83,13 +83,12 @@ export const createLevel10: LevelFactory = (world) => {
   // 8) 힌지 연결
   const pivot = Matter.Constraint.create({
     bodyA: lever,
-    pointA: { x: -20, y: 0 },
+    pointA: { x: 30, y: 0 },
     bodyB: fulcrum,
     pointB: { x: 0, y: 0 },
     length: 0,
     stiffness: 1,
     render: { visible: false },
-    label: 'leverPivot',
   });
 
   // 9) 공 생성
@@ -122,7 +121,7 @@ export const createLevel10: LevelFactory = (world) => {
     floor, support1,support2,
     lever, fulcrum, pivot,
     ball, star,
-    upperRightBox, lowerRightBox, lowerLeftBox, upperLeftBox, bottomBox,
+    bottomBox,
   ]);
 
   // 반환
@@ -131,6 +130,6 @@ export const createLevel10: LevelFactory = (world) => {
     floor, support1,support2,
     lever, fulcrum, pivot,
     ball, star,
-    upperRightBox, lowerRightBox, lowerLeftBox, upperLeftBox, bottomBox
+    bottomBox
   ];
 };

@@ -2,7 +2,7 @@
 import Matter from 'matter-js';
 import type { LevelFactory } from './index';
 
-export const createLevel2: LevelFactory = (world) => {
+export const createLevel5: LevelFactory = (world) => {
   const wallOptions: Matter.IBodyDefinition = {
       isStatic: true,
       label: 'wall',

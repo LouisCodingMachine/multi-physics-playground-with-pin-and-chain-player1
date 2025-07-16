@@ -2,13 +2,13 @@ import Matter from 'matter-js';
 import type { LevelFactory } from './index';
 
 // 스테이지 10 힌지 위치 상수
-export const LEVEL11_HINGE_Y = {
+export const LEVEL10_HINGE_Y = {
   top:    60,
   middle: 160,
   bottom: 260,
 };
 
-export const createLevel11: LevelFactory = (world) => {
+export const createLevel10: LevelFactory = (world) => {
   // 0) 기본 벽 설정
   const wallOptions = {
     isStatic: true,
@@ -62,7 +62,7 @@ export const createLevel11: LevelFactory = (world) => {
   const hingeGroup = -10;
 
   // 4) 힌지 달린 상자
-  const hingeBox = Matter.Bodies.rectangle(350, LEVEL11_HINGE_Y.middle, 150, 100, {
+  const hingeBox = Matter.Bodies.rectangle(350, LEVEL10_HINGE_Y.middle, 150, 100, {
     isStatic: true,
     label: 'hingeBox',
     frictionAir: 0,

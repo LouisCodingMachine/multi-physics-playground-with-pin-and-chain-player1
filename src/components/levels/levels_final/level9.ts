@@ -3,7 +3,11 @@ import type { LevelFactory } from './index';
 
 // 후보군을 파일 상단이나 외부에서 정의해둡니다.
 const fulcrumCandidates = [
-        { x: 450, y: 344 },
+    { x: 420, y: 350 },
+    { x: 450, y: 350 },
+  { x: 480, y: 350 },
+  { x: 530, y: 350 },
+  { x: 560, y: 350 },
 ];
 // candidates 갯수만큼 반복되게 할 수도 있고, 원하시는 규칙에 따라 접근 가능
 
@@ -21,23 +25,21 @@ export const createLevel1: LevelFactory = (world) => {
   });
 
   // 2) 받침용 박스
-  const support1 = Matter.Bodies.rectangle(180, 425, 40, 20, {
+  const support1 = Matter.Bodies.rectangle(180, 420, 40, 20, {
     isStatic: true,
     label: 'support1',
-    mass: 10,
     render: { fillStyle: '#10b981' },
     collisionFilter: { category: 0x0001, mask: 0xFFFF },
   });
   const support2 = Matter.Bodies.rectangle(300, 220, 40, 20, {
     isStatic: true,
     label: 'support2',
-    mass: 10,
     render: { fillStyle: '#10b981' },
     collisionFilter: { category: 0x0001, mask: 0xFFFF },
   });
 
   // 3) 레버 판자
-  const plank = Matter.Bodies.rectangle(390, 350, 670, 20, {
+  const plank = Matter.Bodies.rectangle(400, 350, 650, 20, {
     density: 0,
     friction: 0,
     restitution: 0.5,
@@ -47,26 +49,19 @@ export const createLevel1: LevelFactory = (world) => {
   });
 
   // 4) 왼쪽 스쿱
-  const leftBase  = Matter.Bodies.rectangle(105, 340,  100, 10, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
-  const leftWallA = Matter.Bodies.rectangle(60, 325,  10, 40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
-  const leftWallB = Matter.Bodies.rectangle(155, 325,  10, 40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
+  const leftBase  = Matter.Bodies.rectangle(120, 340,  80, 10, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
+  const leftWallA = Matter.Bodies.rectangle(80, 325,  10, 40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
+  const leftWallB = Matter.Bodies.rectangle(160, 325,  10, 40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
 
   // 5) 오른쪽 스쿱
-  const rightBase  = Matter.Bodies.rectangle(650, 340, 150, 10, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
-  const rightWallA = Matter.Bodies.rectangle(580, 325, 10,  40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
+  const rightBase  = Matter.Bodies.rectangle(570, 340, 300, 10, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
+  const rightWallA = Matter.Bodies.rectangle(420, 325, 10,  40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
   const rightWallB = Matter.Bodies.rectangle(720, 325, 10,  40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
 
   // 후보군에서 fulcrum 위치 선택
   const chosen = fulcrumCandidates[fulcrumIndex % fulcrumCandidates.length];
   // 다음 진입 시 다음 위치가 되도록 인덱스 증가
   fulcrumIndex++;
-
-  const fulcrumTemp = Matter.Bodies.circle(420, 350, 10, {
-    isStatic: true,
-    label: 'fulcrum',
-    render: { fillStyle: 'rgba(0,0,0,0)', strokeStyle: '#fbbf24', lineWidth: 1 },
-    collisionFilter: { group: -1, category: 0x0002, mask: 0x0000 },
-  });
 
   // fulcrum 생성 (선택한 위치)
   const fulcrum = Matter.Bodies.circle(chosen.x, chosen.y, 10, {
@@ -84,22 +79,9 @@ export const createLevel1: LevelFactory = (world) => {
     collisionFilter: { category: 0x0001, mask: 0xFFFF },
   });
 
-  console.log ("lever.position.x, lever.position.y", lever.position.x, lever.position.y);
-  console.log("chosen.x, chosen.y", chosen.x, chosen.y);
-
-  const pivotTemp = Matter.Constraint.create({
-    bodyA: lever,
-    pointA: { x: 420 - lever.position.x, y: 350 - lever.position.y },
-    bodyB: fulcrumTemp,
-    pointB: { x: 0, y: 0 },
-    length: 0,
-    stiffness: 1,
-    render: { visible: false },
-  });
-
   const pivot = Matter.Constraint.create({
     bodyA: lever,
-    pointA: { x: 450 - lever.position.x, y: 350 - lever.position.y },
+    pointA: { x: chosen.x - lever.position.x, y: chosen.y - lever.position.y },
     bodyB: fulcrum,
     pointB: { x: 0, y: 0 },
     length: 0,
@@ -127,16 +109,14 @@ export const createLevel1: LevelFactory = (world) => {
   // 월드에 바디 추가
   Matter.World.add(world, [
     floor, support1, support2,
-    lever, fulcrumTemp, pivotTemp, fulcrum, pivot,  
+    lever, fulcrum, pivot,
     ball, star,
   ]);
-
-  // Matter.World.remove(world, [fulcrumTemp, pivotTemp]);
 
   // 반환
   return [
     floor, support1, support2,
-    lever, fulcrumTemp, pivotTemp, fulcrum, pivot,
+    lever, fulcrum, pivot,
     ball, star,
   ];
 };

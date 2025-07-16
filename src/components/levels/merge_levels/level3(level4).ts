@@ -5,7 +5,7 @@ import type { LevelFactory } from './index';
 // 전역으로 사용 중인 socket을 가져옵니다
 import { socket } from '../../socket';
 
-export const createLevel3: LevelFactory = (world) => {
+export const createLevel4: LevelFactory = (world) => {
   // 1) 바닥 벽 생성
   const wallOptions: Matter.IBodyDefinition = {
     isStatic: true,

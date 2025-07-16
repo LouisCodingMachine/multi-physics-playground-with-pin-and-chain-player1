@@ -2,7 +2,7 @@
 import Matter from 'matter-js';
 import type { LevelFactory } from './index';
 
-export const createLevel16: LevelFactory = (world) => {
+export const createLevel13: LevelFactory = (world) => {
 
   // 기본 벽 옵션
   const wallOptions = {
@@ -47,7 +47,7 @@ export const createLevel16: LevelFactory = (world) => {
       isStatic: true,
       label: 'ground_18',
       render: { fillStyle: '#6b7280' },
-      collisionFilter: { category: 0x0002, mask: 0xFFFD },
+      collisionFilter: { category: 0x0001, mask: 0xFFFF },
     }
   );
 

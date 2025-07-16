@@ -2,7 +2,7 @@
 import Matter from 'matter-js';
 import type { LevelFactory } from './index';
 
-export const createLevel14: LevelFactory = (world) => {
+export const createLevel16: LevelFactory = (world) => {
   // 기본 벽 옵션
   const wallOptions = {
     isStatic: true,

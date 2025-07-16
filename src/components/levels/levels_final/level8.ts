@@ -1,21 +1,8 @@
+// src/levels/level11.ts
 import Matter from 'matter-js';
 import type { LevelFactory } from './index';
 
-// 후보군을 파일 상단이나 외부에서 정의해둡니다.
-const fulcrumCandidates = [
-    { x: 420, y: 350 },
-    { x: 450, y: 350 },
-  { x: 480, y: 350 },
-  { x: 530, y: 350 },
-  { x: 560, y: 350 },
-];
-// candidates 갯수만큼 반복되게 할 수도 있고, 원하시는 규칙에 따라 접근 가능
-
-// 현재 인덱스를 어디에 저장할지에 따라 방식이 달라집니다.
-// 예시: 그냥 전역 변수 (테스트용)
-let fulcrumIndex = 0; // import/export 해서 관리하거나, 레벨마다 별도 관리 가능
-
-export const createLevel9: LevelFactory = (world) => {
+export const createLevel6: LevelFactory = (world) => {
   // 1) 바닥 생성
   const floor = Matter.Bodies.rectangle(400, 610, 810, 20, {
     isStatic: true,
@@ -24,7 +11,7 @@ export const createLevel9: LevelFactory = (world) => {
     collisionFilter: { category: 0x0001, mask: 0xFFFF },
   });
 
-  // 2) 받침용 박스
+  // 2) 왼쪽 받침용 박스
   const support1 = Matter.Bodies.rectangle(180, 420, 40, 20, {
     isStatic: true,
     label: 'support1',
@@ -58,19 +45,6 @@ export const createLevel9: LevelFactory = (world) => {
   const rightWallA = Matter.Bodies.rectangle(420, 325, 10,  40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
   const rightWallB = Matter.Bodies.rectangle(720, 325, 10,  40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
 
-  // 후보군에서 fulcrum 위치 선택
-  const chosen = fulcrumCandidates[fulcrumIndex % fulcrumCandidates.length];
-  // 다음 진입 시 다음 위치가 되도록 인덱스 증가
-  fulcrumIndex++;
-
-  // fulcrum 생성 (선택한 위치)
-  const fulcrum = Matter.Bodies.circle(chosen.x, chosen.y, 10, {
-    isStatic: true,
-    label: 'fulcrum',
-    render: { fillStyle: 'rgba(0,0,0,0)', strokeStyle: '#fbbf24', lineWidth: 1 },
-    collisionFilter: { group: -1, category: 0x0002, mask: 0x0000 },
-  });
-
   // 6) 레버 복합체 생성
   const lever = Matter.Body.create({
     parts: [plank, leftBase, leftWallA, leftWallB, rightBase, rightWallA, rightWallB],
@@ -78,10 +52,19 @@ export const createLevel9: LevelFactory = (world) => {
     render: { visible: true },
     collisionFilter: { category: 0x0001, mask: 0xFFFF },
   });
+  const { x: cx, y: cy } = lever.position;
+  // 7) 지렛대 축 
+  const fulcrum = Matter.Bodies.circle(cx, cy, 10, {
+    isStatic: true,
+    label: 'fulcrum',
+    render: { fillStyle: 'rgba(0,0,0,0)', strokeStyle: '#fbbf24', lineWidth: 1 },
+    collisionFilter: { group: -1, category: 0x0002, mask: 0x0000 },
+  });
 
+  // 8) 힌지 연결
   const pivot = Matter.Constraint.create({
     bodyA: lever,
-    pointA: { x: chosen.x - lever.position.x, y: chosen.y - lever.position.y },
+    pointA: { x: 30, y: 0 },
     bodyB: fulcrum,
     pointB: { x: 0, y: 0 },
     length: 0,
@@ -91,8 +74,7 @@ export const createLevel9: LevelFactory = (world) => {
 
   // 9) 공 생성
   const ball = Matter.Bodies.circle(100, 300, 15, {
-    frictionAir:  0,
-    friction: 0,  
+    frictionAir:  0.001, 
     label: 'ball',
     render: { fillStyle: '#ef4444' },
     collisionFilter: { category: 0x0001, mask: 0xFFFF },

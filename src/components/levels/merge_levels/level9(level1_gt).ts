@@ -15,7 +15,7 @@ const fulcrumCandidates = [
 // 예시: 그냥 전역 변수 (테스트용)
 let fulcrumIndex = 0; // import/export 해서 관리하거나, 레벨마다 별도 관리 가능
 
-export const createLevel9: LevelFactory = (world) => {
+export const createLevel1: LevelFactory = (world) => {
   // 1) 바닥 생성
   const floor = Matter.Bodies.rectangle(400, 610, 810, 20, {
     isStatic: true,

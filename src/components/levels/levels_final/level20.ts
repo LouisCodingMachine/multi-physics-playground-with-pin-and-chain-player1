@@ -2,7 +2,7 @@
 import Matter from 'matter-js';
 import type { LevelFactory } from './index';
 
-export const createLevel20: LevelFactory = (world) => {
+export const createLevel18: LevelFactory = (world) => {
   // ─── 0) 레버 및 바구니 설정 ───
   const leverConfig = {
     x: 205,

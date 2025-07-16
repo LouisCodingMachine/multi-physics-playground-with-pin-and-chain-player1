@@ -2,7 +2,7 @@
 import Matter from 'matter-js';
 import type { LevelFactory } from './index';
 
-export const createLevel12: LevelFactory = (world) => {
+export const createLevel19: LevelFactory = (world) => {
   // 기본 벽 옵션
   const wallOptions = {
     isStatic: true,
@@ -67,7 +67,7 @@ export const createLevel12: LevelFactory = (world) => {
 
   // 못(Nail) 생성 및 제약
   const nailData = [
-    { x: 500, y: 300, id: 'nail_Tshape' },
+    { x: 500, y: 150, id: 'nail_Tshape' },
   ];
   const nails = nailData.map(({ x, y, id }) =>
     Matter.Bodies.circle(x, y, 10, {
