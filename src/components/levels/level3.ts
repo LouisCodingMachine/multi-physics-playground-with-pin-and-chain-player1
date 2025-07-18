@@ -25,8 +25,6 @@ export const createLevel3: LevelFactory = (world) => {
   const radius = 10;
   const nailPositions = [
     { x: 475, y: 240, id: 'nail4_0' },
-    { x: 475, y: 280, id: 'nail4_1' },
-    { x: 475, y: 310, id: 'nail4_2' },
   ];
   const nails = nailPositions.map(({ x, y, id }) => {
     const nail = Matter.Bodies.circle(x, y, radius, {

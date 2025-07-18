@@ -111,7 +111,7 @@ export const createLevel10: LevelFactory = (world) => {
 
   // 11) 추가 박스 생성
   const upperRightBox = Matter.Bodies.rectangle(750, 120, 20, 80, { isStatic: true, label: 'upper_right_box', render: { fillStyle: '#10b981' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
-  const lowerRightBox = Matter.Bodies.rectangle(750, 350, 20, 150, { isStatic: true, label: 'lower_right_box', render: { fillStyle: '#10b981' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
+  const lowerRightBox = Matter.Bodies.rectangle(750, 350, 20, 300, { isStatic: true, label: 'lower_right_box', render: { fillStyle: '#10b981' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
   const lowerLeftBox  = Matter.Bodies.rectangle(650, 425, 20, 80, { isStatic: true, label: 'lower_left_box', render: { fillStyle: '#10b981' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
   const upperLeftBox  = Matter.Bodies.rectangle(620, 385, 80, 20, { isStatic: true, label: 'upper_left_box', render: { fillStyle: '#10b981' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
   const bottomBox     = Matter.Bodies.rectangle(700, 520, 80, 20, { isStatic: true, label: 'bottom_box', render: { fillStyle: '#10b981' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
@@ -122,7 +122,7 @@ export const createLevel10: LevelFactory = (world) => {
     floor, support1,support2,
     lever, fulcrum, pivot,
     ball, star,
-    upperRightBox, lowerRightBox, lowerLeftBox, upperLeftBox, bottomBox,
+     upperLeftBox, 
   ]);
 
   // 반환
@@ -131,6 +131,5 @@ export const createLevel10: LevelFactory = (world) => {
     floor, support1,support2,
     lever, fulcrum, pivot,
     ball, star,
-    upperRightBox, lowerRightBox, lowerLeftBox, upperLeftBox, bottomBox
-  ];
+     upperLeftBox,   ];
 };
