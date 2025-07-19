@@ -87,9 +87,9 @@ export const createLevel8: LevelFactory = (world) => {
     render: { fillStyle: '#fbbf24' },
     collisionFilter: { category: 0x0001, mask: 0x0001 },
   });
-  const diagonalRectangle = Matter.Bodies.rectangle(400, -80, 400, 1500, {
+  const diagonalRectangle = Matter.Bodies.rectangle(400, -120, 400, 1500, {
     isStatic: true,
-    angle: Math.PI / -2.2, // 45도 회전
+    angle: Math.PI / 2.2, // 45도 회전
     render: { fillStyle: '#ff6347' },
     collisionFilter: { category: 0x0001, mask: 0xFFFF },
   });

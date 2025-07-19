@@ -1027,7 +1027,7 @@ const createPhysicsBody = (
 
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (tool === 'pin' && currentLevel === 11) {
+    if (tool === 'pin' && (currentLevel === 11 || currentLevel === 4 || currentLevel === 5 ||currentLevel === 6||currentLevel === 7||currentLevel === 8||currentLevel === 9)) {
       // 핀 툴 모드인데 스테이지10이면 그냥 무시
       return;
     }
@@ -1707,7 +1707,7 @@ const createPhysicsBody = (
             className={`relative
               p-2 rounded
               ${tool === 'push' ? 'bg-blue-500 text-white' : 'bg-gray-200'}
-              ${(currentLevel === 7 || currentLevel === 8 || currentLevel === 9 || currentLevel === 10)? 'opacity-50 cursor-not-allowed' : ''}
+              ${(currentLevel === 7 || currentLevel === 8 || currentLevel === 9 || currentLevel === 10 || currentLevel === 11)? 'opacity-50 cursor-not-allowed' : ''}
             `}
             style={{
               display: 'flex',
@@ -1721,7 +1721,7 @@ const createPhysicsBody = (
             <Circle size={20} style={{ position: 'absolute', left: '6px', zIndex: 1 }} />
             {/* 손이 약간 겹치도록 배치 */}
             <Hand size={22} style={{ position: 'relative', left: '8px', zIndex: 2, transform: 'rotate(-20deg)' }} />
-            {(currentLevel === 7 || currentLevel === 8 || currentLevel === 9 || currentLevel === 10) && (
+            {(currentLevel === 7 || currentLevel === 8 || currentLevel === 9 || currentLevel === 10 || currentLevel === 11) && (
                 <X
                   size={48}
                   className="absolute inset-0 m-auto text-red-500 pointer-events-none"
