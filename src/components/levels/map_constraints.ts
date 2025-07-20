@@ -2,7 +2,7 @@ export const map_constraints: Record<number, string> = {
   1:  '',
   2:  '',
   3:  '',
-  4:  '',
+  4:  'X 표시된 기능은 못씀',
   5:  '',
   6:  '',
   7:  '',
