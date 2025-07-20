@@ -1883,9 +1883,6 @@ const createPhysicsBody = (
         
         <div className="relative">
           
-
-
-          
             <canvas
               ref={canvasRef}
               width={800}
@@ -1898,19 +1895,20 @@ const createPhysicsBody = (
               style={{ cursor: tool === 'eraser' ? 'crosshair' : 'default' }}
             />
           
-          <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-start gap-4">
-            {/* 왼쪽: 레벨 제목 */}
-            <div className="bg-black bg-opacity-50 text-white px-3 py-1 rounded-md font-semibold">
-              {levelTitles[currentLevel] || '맵 제목 없음'}
-            </div>
-
-            {/* 오른쪽: 맵 제약 조건 */}
-            {map_constraints[currentLevel] && (
-              <div className="bg-black bg-opacity-50 text-white px-3 py-1 rounded-md font-semibold text-right">
+          <div className="absolute top-4 left-4 z-20
+                  bg-black bg-opacity-50
+                  text-white px-3 py-1
+                  rounded-md font-semibold">
+            {levelTitles[currentLevel] || '맵 제목 없음'}
+          </div>
+          {map_constraints[currentLevel] && (
+              <div className="absolute top-4 right-4 z-20
+                      bg-black bg-opacity-50
+                      text-white px-3 py-1
+                      rounded-md font-semibold">
                 {map_constraints[currentLevel]}
               </div>
             )}
-          </div>
           {/* 커서를 표시하는 별도의 캔버스 */}
           <canvas
             ref={cursorCanvasRef}
