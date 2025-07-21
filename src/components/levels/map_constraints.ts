@@ -2,7 +2,7 @@ export const map_constraints: Record<number, string> = {
   1:  '',
   2:  '',
   3:  '',
-  4:  'X 표시된 기능은 못씀',
+  4:  '공의 왼쪽을 클릭해봐(공에서 먼 지점 클릭도 OK)',
   5:  '',
   6:  '',
   7:  '',

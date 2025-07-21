@@ -72,7 +72,6 @@ const PhysicsCanvas: React.FC<PhysicsCanvasProps> = ({ isPlayerOne }) => {
   const initialObstaclesRef = useRef<
     { body: Matter.Body; position: Matter.Vector; angle: number }[]
   >([]);
-  const [pushTimer, setPushTimer] = useState<number>(0);
   // 컴포넌트 최상단에 선언
 const isToolForbidden = (
   tool: 'pen' | 'eraser' | 'pin' | 'chain' | 'push',
@@ -134,29 +133,6 @@ const isToolForbidden = (
       });
     }
   }, [gameEnded])
-
-  useEffect(() => {
-  if (pushTimer > 0) {
-    const timerId = setTimeout(() => setPushTimer(pushTimer - 1), 1000);
-    return () => clearTimeout(timerId);
-  }
-}, [pushTimer]);
-
-useEffect(() => {
-  const handlePush = (data: { force: { x: number; y: number }; playerId: string }) => {
-    if (ballRef.current) {
-      Matter.Body.applyForce(ballRef.current, ballRef.current.position, data.force);
-      // 타이머 5초 시작
-      setPushTimer(5);
-    }
-  };
-  socket.on('push', handlePush);
-  return () => {
-    socket.off('push', handlePush);
-  };
-}, [socket]);
-
-
 useEffect(() => {
   const handler = (data: {
     level: number;
@@ -1286,7 +1262,7 @@ const createPhysicsBody = (
 
       let force = clickOffsetX < 0 ? { x: 0.007, y: 0 } : { x: -0.007, y: 0 };
       if(currentLevelRef.current === 12) {
-        force = clickOffsetX < 0 ? { x: 0.0538, y: 0 } : { x: -0.0538, y: 0 };
+        force = clickOffsetX < 0 ? { x: 0.0535, y: 0 } : { x: -0.0535, y: 0 };
         // force = clickOffsetX < 0 ? { x: 0.05455, y: 0 } : { x: -0.05455, y: 0 };
       }
 
@@ -1296,8 +1272,6 @@ const createPhysicsBody = (
         playerId: p1,
         currentLevel
       });
-
-      setPushTimer(5);
     }
 
     if(currentTurn === p1) {
@@ -1842,7 +1816,6 @@ const createPhysicsBody = (
               ${tool === 'push' ? 'bg-blue-500 text-white' : 'bg-gray-200'}
               ${(currentLevel === 7 || currentLevel === 8 || currentLevel === 9 || currentLevel === 10 || currentLevel === 10 || currentLevel === 11)? 'opacity-50 cursor-not-allowed' : ''}
             `}
-            
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -1862,18 +1835,6 @@ const createPhysicsBody = (
                 />
               )}
           </button>
-          {pushTimer > 0 && (
-      <div className="flex items-center gap-2">
-        <span className="font-medium">밀기 타이머</span>
-        <div className="w-24 h-2 bg-gray-300 rounded overflow-hidden">
-          <div
-            className="h-2 bg-blue-500 transition-width duration-500"
-            style={{ width: `${(pushTimer / 5) * 100}%` }}
-          />
-        </div>
-      </div>
-    )}
-          
           {currentLevelRef.current === 11 && (
     <>
       <button
