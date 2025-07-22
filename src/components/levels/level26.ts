@@ -52,7 +52,7 @@ export const createLevel26: LevelFactory = (world) => {
     });
     const swingBob = Matter.Bodies.circle(600, 320, 20, {
       density: 0.02, label: 'bob32',
-      render: { fillStyle: '#3b82f6' }
+      render: { fillStyle: '#ef4444' }
     });
     bodies.push(swingPivot, swingBob);
   

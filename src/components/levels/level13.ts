@@ -24,13 +24,13 @@ export const createLevel13: LevelFactory = (world) => {
   const leftBox = Matter.Bodies.rectangle(60, 100, 80, 30, {
     isStatic: true,
     label: 'left_box',
-    render: { fillStyle: '#10b981' },
+    render: { fillStyle: '#3b82f6' },
     collisionFilter: { category: 0x0002, mask: 0xFFFD },
   });
   const rightBox = Matter.Bodies.rectangle(700, 500, 80, 30, {
     isStatic: true,
     label: 'right_box',
-    render: { fillStyle: '#10b981' },
+    render: { fillStyle: '#3b82f6' },
     collisionFilter: { category: 0x0002, mask: 0xFFFD },
   });
 
