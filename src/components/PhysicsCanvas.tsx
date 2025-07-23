@@ -1123,7 +1123,11 @@ const createPhysicsBody = (
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (tool === 'push' && pushTimer > 0) {
-      showPopup(`밀기 대기 중: ${pushTimer}초 남음`);
+      if (currentLevelRef.current === 12) {
+        showPopup(`해당 스테이지에서는 밀기를 한번 밖에 사용 못 합니다. 다시 밀려면 초기화하세요.`);  
+      } else {
+        showPopup(`밀기 대기 중: ${pushTimer}초 남음`);
+      }
       return;
     }
   // ——— 그 밖에도 필요하면 드로잉 잠금 체크 ———
@@ -1146,6 +1150,10 @@ const createPhysicsBody = (
         );
         // 공(ball)에는 핀 못 찍게 금지
         if (targetBody?.label === 'ball') {
+          return;
+        }
+        if (!targetBody) {
+          console.log("No body found under nail position.");
           return;
         }
 
@@ -1324,7 +1332,7 @@ const createPhysicsBody = (
 
       let force = clickOffsetX < 0 ? { x: 0.007, y: 0 } : { x: -0.007, y: 0 };
       if(currentLevelRef.current === 12) {
-        force = clickOffsetX < 0 ? { x: 0.0477, y: 0 } : { x: -0.0477, y: 0 };
+        force = clickOffsetX < 0 ? { x: 0.0535, y: 0 } : { x: -0.0535, y: 0 };
         // force = clickOffsetX < 0 ? { x: 0.05455, y: 0 } : { x: -0.05455, y: 0 };
       }
 
