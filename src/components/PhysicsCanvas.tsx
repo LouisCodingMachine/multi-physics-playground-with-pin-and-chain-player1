@@ -98,6 +98,47 @@ const isToolForbidden = (
   // 못(nail)들을 저장하는 상태
   const [nails, setNails] = useState<Matter.Body[]>([]);
   const nailsRef = useRef<Matter.Body[]>([]);
+
+  const [fulcrumIndex, setFulcrumIndex] = useState(0);
+
+  useEffect(() => {
+    // ... resetLevel 이벤트 핸들러와 비슷하게 ...
+    socket.on('changeFulcrum', (data: { level: number, fulcrumIndex: number }) => {
+      if (data.level === currentLevel) {
+        setFulcrumIndex(data.fulcrumIndex);
+        setResetTrigger(t => !t); // 리렌더링 트리거
+        
+        showPopup('지렛대 중심을 이동했습니다');
+      }
+    });
+  
+    return () => {
+      socket.off('changeFulcrum');
+    };
+  }, [currentLevel]);
+
+  const moveFulcrum = (dir: "left" | "right") => {
+    setFulcrumIndex(prev => {
+      // 후보군 개수 가져오기 (레벨9, 10에서 사용하는 배열과 반드시 동일해야 함)
+      const candidateLength = 5; // fulcrumCandidates.length
+      if (dir === "left") {
+        return (prev - 1 + candidateLength) % candidateLength;
+      } else {
+        return (prev + 1) % candidateLength;
+      }
+    });
+    // 힌지 위치 바꿀 때와 같이 리렌더 트리거 및 서버 sync 필요하면 추가
+    setResetTrigger(t => !t);
+    socket.emit('changeFulcrum', {
+      level: currentLevel,
+      fulcrumIndex: dir === "left" 
+        ? (fulcrumIndex - 1 + 5) % 5
+        : (fulcrumIndex + 1) % 5,
+      playerId: p2, // 필요한 값으로
+    });
+
+    showPopup(`${dir === "left" ? '지렛대 중심이 왼쪽으로 이동했습니다' : '지렛대 중심이 오른쪽으로 이동했습니다'}`);
+  };
   
   // nail 추가 함수
   // const addNail = (nail: Matter.Body) => {
@@ -574,7 +615,9 @@ useEffect(() => {
     return () => {
       socket.off('resetLevel');
     };
-  }, []);useEffect(() => {
+  }, []);
+  
+  useEffect(() => {
   const handleErase = (data: { customId: string; playerId: string }) => {
     const world = engineRef.current.world;
     const allBodies = Matter.Composite.allBodies(world);
@@ -753,9 +796,15 @@ useEffect(() => {
   // 월드 초기화 & 레벨 빌드
   const world = engineRef.current.world;
   Matter.World.clear(world, false);
+  
   const factory = levelFactories[currentLevel];
   if (factory) {
-    const bodies = factory(world);
+    let bodies;
+    if (currentLevel === 9 || currentLevel === 10) {
+      bodies = factory(world, fulcrumIndex);
+    } else {
+      bodies = factory(world);
+    }
 
     initialObstaclesRef.current = bodies
   .filter(b => b.label === 'obstacle')
@@ -868,8 +917,25 @@ const resetBallAndObstacles = () => {
     // 사용자 드로잉 오브젝트 투명도 감소
     Matter.Composite.allBodies(world).forEach(body => {
       if (!staticObjects.includes(body.label) && !body.isStatic && wallBottom) {
-        const touching = Matter.SAT.collides(body, wallBottom)?.collided;
-        if (touching) {
+        const touchingBottom = Matter.SAT.collides(body, wallBottom)?.collided;
+
+        // (2) not_draw label을 가진 body들과 닿았는지 체크
+        const notDrawBodies = Matter.Composite.allBodies(world).filter(b =>
+          b.label.includes('not_draw')
+        );
+
+        // not_draw 오브젝트 중 하나라도 body와 닿으면 true
+        const touchingNotDraw = notDrawBodies.some(notDrawBody =>
+          Matter.SAT.collides(body, notDrawBody)?.collided
+        );
+
+        // (3) body가 어떤 nail과 겹치는지 체크 (bounding box overlap)
+        const isOnNail = nailsRef.current.some(nail =>
+          Matter.Bounds.overlaps(body.bounds, nail.bounds)
+        );
+
+        // (4) 조건: 바닥 or (not_draw && NOT 핀 위)
+        if (touchingBottom || (touchingNotDraw && !isOnNail)) {
           body.render.opacity = (body.render.opacity ?? 1) - 0.01;
           if (body.render.opacity! <= 0 && !body.eraserEmitted) {
             body.eraserEmitted = true;
@@ -883,6 +949,8 @@ const resetBallAndObstacles = () => {
         }
       }
     });
+
+    
   };
 
   // 이벤트 등록
@@ -1952,53 +2020,63 @@ const createPhysicsBody = (
     )}
           
           {currentLevelRef.current === 11 && (
-    <>
-      <button
-        onClick={() => {
-          const newIndex = ((hingePosIndex + 2) % 3) as 0 | 1 | 2;
-          setHingePosIndex(newIndex);
-          setResetTrigger(t => !t);
-          socket.emit('changeHingePosition', {
-            level: currentLevel,
-            hingePosIndex: newIndex,
-            playerId: p2,
-          });
-          resetLevel();
-        }}
-        className="p-2 rounded bg-gray-200 hover:bg-gray-300"
-        aria-label="이전 힌지 위치"
-      >
-        <ChevronLeft size={24} />
-      </button>
-      <button
-        onClick={() => {
-          const newIndex = ((hingePosIndex + 1) % 3) as 0 | 1 | 2;
-          setHingePosIndex(newIndex);
-          setResetTrigger(t => !t);
-          socket.emit('changeHingePosition', {
-            level: currentLevel,
-            hingePosIndex: newIndex,
-            playerId: p2,
-          });
-          resetLevel();
-        }}
-        className="p-2 rounded bg-gray-200 hover:bg-gray-300"
-        aria-label="다음 힌지 위치"
-      >
-        <ChevronRight size={24} />
-      </button>
-    </>
-  )}
-
-          {(currentLevelRef.current === 9 || currentLevelRef.current === 10) && (
+          <>
             <button
-              onClick={resetLevel}
-              className="relative p-2 rounded bg-gray-200"
+              onClick={() => {
+                const newIndex = ((hingePosIndex + 2) % 3) as 0 | 1 | 2;
+                setHingePosIndex(newIndex);
+                setResetTrigger(t => !t);
+                socket.emit('changeHingePosition', {
+                  level: currentLevel,
+                  hingePosIndex: newIndex,
+                  playerId: p2,
+                });
+                resetLevel();
+              }}
+              className="p-2 rounded bg-gray-200 hover:bg-gray-300"
+              aria-label="이전 힌지 위치"
             >
-              지렛대<br/>
-              중심 재설정
+              <ChevronLeft size={24} />
             </button>
-            )}
+            <button
+              onClick={() => {
+                const newIndex = ((hingePosIndex + 1) % 3) as 0 | 1 | 2;
+                setHingePosIndex(newIndex);
+                setResetTrigger(t => !t);
+                socket.emit('changeHingePosition', {
+                  level: currentLevel,
+                  hingePosIndex: newIndex,
+                  playerId: p2,
+                });
+                resetLevel();
+              }}
+              className="p-2 rounded bg-gray-200 hover:bg-gray-300"
+              aria-label="다음 힌지 위치"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </>
+        )}
+
+        {(currentLevel === 9 || currentLevel === 10) && (
+          <div className="flex gap-2 items-center">
+            <button
+              onClick={() => moveFulcrum("left")}
+              className="p-2 rounded bg-gray-200 hover:bg-gray-300"
+              aria-label="지렛대 중심 왼쪽"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <span className="font-medium">지렛대 중심 재설정</span>
+            <button
+              onClick={() => moveFulcrum("right")}
+              className="p-2 rounded bg-gray-200 hover:bg-gray-300"
+              aria-label="지렛대 중심 오른쪽"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+        )}
         </div>
 
         <div className="flex items-center justify-between gap-4">
@@ -2025,20 +2103,19 @@ const createPhysicsBody = (
               style={{ cursor: tool === 'eraser' ? 'crosshair' : 'default' }}
             />
           
-          <div className="absolute top-4 left-4 z-20
-                  bg-black bg-opacity-50
-                  text-white px-3 py-1
-                  rounded-md font-semibold">
-            {levelTitles[currentLevel] || '맵 제목 없음'}
-          </div>
-          {map_constraints[currentLevel] && (
-              <div className="absolute top-4 right-4 z-20
-                      bg-black bg-opacity-50
-                      text-white px-3 py-1
-                      rounded-md font-semibold">
+          <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-start gap-4">
+            {/* 왼쪽: 레벨 제목 */}
+            <div className="bg-black bg-opacity-50 text-white px-3 py-1 rounded-md font-semibold">
+              {levelTitles[currentLevel] || '맵 제목 없음'}
+            </div>
+
+            {/* 오른쪽: 맵 제약 조건 */}
+            {map_constraints[currentLevel] && (
+              <div className="bg-black bg-opacity-50 text-white px-3 py-1 rounded-md font-semibold text-right">
                 {map_constraints[currentLevel]}
               </div>
             )}
+          </div>
           {/* 커서를 표시하는 별도의 캔버스 */}
           <canvas
             ref={cursorCanvasRef}

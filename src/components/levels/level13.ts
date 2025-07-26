@@ -23,13 +23,13 @@ export const createLevel13: LevelFactory = (world) => {
   // 1) 왼쪽 및 오른쪽 박스 생성
   const leftBox = Matter.Bodies.rectangle(60, 100, 80, 30, {
     isStatic: true,
-    label: 'left_box',
+    label: 'left_box_not_draw',
     render: { fillStyle: '#3b82f6' },
     collisionFilter: { category: 0x0002, mask: 0xFFFD },
   });
   const rightBox = Matter.Bodies.rectangle(700, 500, 80, 30, {
     isStatic: true,
-    label: 'right_box',
+    label: 'right_box_not_draw',
     render: { fillStyle: '#3b82f6' },
     collisionFilter: { category: 0x0002, mask: 0xFFFD },
   });

@@ -1,4 +1,4 @@
-export type LevelFactory = (world: Matter.World) => Matter.Body[];  // 레벨 생성 함수 시그니처 정의
+export type LevelFactory = (world: Matter.World, fulcrumIndex?: number) => Matter.Body[];  // 레벨 생성 함수 시그니처 정의
 // src/levels/index.ts
 // 이 파일을 생성하여 레벨 팩토리 함수를 관리합니다
 import { createLevel1 } from './level1';
@@ -41,8 +41,8 @@ export const levelFactories: Record<number, LevelFactory> = {
   6: createLevel6,
   7: createLevel7,
   8: createLevel8,
-  9: createLevel9,
-  10: createLevel10,
+  9: (world: Matter.World, fulcrumIndex = 0) => createLevel9(world, fulcrumIndex),
+  10: (world: Matter.World, fulcrumIndex = 0) => createLevel10(world, fulcrumIndex),
   11: createLevel11,
   12: createLevel12,
   13: createLevel13,

@@ -39,7 +39,7 @@ export const createLevel16: LevelFactory = (world) => {
 
   const ballGround = Matter.Bodies.rectangle(100, 200, 50, 20, {
       isStatic: true,
-      label: 'ballGround_18_reject_pin',
+      label: 'ballGround_18_reject_pin_not_draw',
       render: { fillStyle: '#3b82f6' },
       collisionFilter: { category: 0x0001, mask: 0xFFFF },
     });

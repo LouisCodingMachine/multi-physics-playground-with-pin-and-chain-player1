@@ -1,21 +1,23 @@
 import Matter from 'matter-js';
 import type { LevelFactory } from './index';
+import { fulcrumCandidates } from '../constants/fulcrumCandidates';
 
 // 후보군을 파일 상단이나 외부에서 정의해둡니다.
-const fulcrumCandidates = [
-    { x: 420, y: 350 },
-    { x: 450, y: 350 },
-  { x: 480, y: 350 },
-  { x: 530, y: 350 },
-  { x: 560, y: 350 },
-];
+// const fulcrumCandidates = [
+//     { x: 420, y: 350 },
+//     { x: 450, y: 350 },
+//   { x: 480, y: 350 },
+//   { x: 530, y: 350 },
+//   { x: 560, y: 350 },
+// ];
 // candidates 갯수만큼 반복되게 할 수도 있고, 원하시는 규칙에 따라 접근 가능
 
 // 현재 인덱스를 어디에 저장할지에 따라 방식이 달라집니다.
 // 예시: 그냥 전역 변수 (테스트용)
 let fulcrumIndex = 0; // import/export 해서 관리하거나, 레벨마다 별도 관리 가능
 
-export const createLevel10: LevelFactory = (world) => {
+export const createLevel10: LevelFactory = (world, fulcrumIndex = 0) => {
+  const chosen = fulcrumCandidates[fulcrumIndex % fulcrumCandidates.length];
   // 1) 바닥 생성
   const floor = Matter.Bodies.rectangle(400, 610, 810, 20, {
     isStatic: true,
@@ -59,9 +61,9 @@ export const createLevel10: LevelFactory = (world) => {
   const rightWallB = Matter.Bodies.rectangle(720, 325, 10,  40, { render: { fillStyle: '#4B5563' }, collisionFilter: { category: 0x0001, mask: 0xFFFF } });
 
   // 후보군에서 fulcrum 위치 선택
-  const chosen = fulcrumCandidates[fulcrumIndex % fulcrumCandidates.length];
+  // const chosen = fulcrumCandidates[fulcrumIndex % fulcrumCandidates.length];
   // 다음 진입 시 다음 위치가 되도록 인덱스 증가
-  fulcrumIndex++;
+  // fulcrumIndex++;
 
   // fulcrum 생성 (선택한 위치)
   const fulcrum = Matter.Bodies.circle(chosen.x, chosen.y, 10, {
